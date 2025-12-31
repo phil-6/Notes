@@ -28,4 +28,47 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  activerecord:
+    attributes:
+      user:
+        email: "Email"
+        display_name: "Display Name"
+        password: "Password"
+        password_confirmation: "Password Confirmation"
+      note:
+        title: "Title"
+        content: "Content"
+        color: "Color"
+        pinned: "Pinned"
+        tags: "Tags"
+
+  authentication:
+    sign_in_required: "Please sign in to continue"
+
+  sessions:
+    sign_in: "Sign In"
+    sign_up: "Sign Up"
+    no_account: "Don't have an account?"
+    signed_in: "Successfully signed in"
+    signed_out: "Successfully signed out"
+    invalid_credentials: "Invalid email or password"
+
+  registrations:
+    sign_up: "Sign Up"
+    sign_in: "Sign In"
+    create_account: "Create Account"
+    have_account: "Already have an account?"
+    welcome: "Welcome! Your account has been created"
+
+  notes:
+    created: "Note created successfully"
+    updated: "Note saved"
+    destroyed: "Note deleted"
+    pinned: "Note pinned"
+    unpinned: "Note unpinned"
+    new_note: "New Note"
+    edit_note: "Edit Note"
+    my_notes: "My Notes"
+    no_notes: "No notes yet. Create your first note!"
+    pinned_notes: "Pinned Notes"
+    other_notes: "Other Notes"

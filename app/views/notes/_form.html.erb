@@ -1,0 +1,39 @@
+<%= form_with model: note, data: { controller: "autosave", autosave_url_value: note.persisted? ? note_path(note) : notes_path, action: "turbo:submit-end->autosave#saved" }, class: "space-y-4" do |form| %>
+  <div>
+    <%= form.text_field :title, placeholder: t("activerecord.attributes.note.title"), class: "w-full text-2xl font-medium border-0 focus:ring-0 focus:outline-none bg-transparent", data: { autosave_target: "input", action: "input->autosave#scheduleAutoSave" } %>
+  </div>
+
+  <div>
+    <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border-0 focus:ring-0 focus:outline-none bg-transparent", data: { autosave_target: "input", action: "trix-change->autosave#scheduleAutoSave" } %>
+  </div>
+
+  <div class="flex items-center space-x-4">
+    <div>
+      <%= form.label :color, t("activerecord.attributes.note.color"), class: "block text-sm font-medium text-gray-700 mb-1" %>
+      <div class="flex space-x-2">
+        <% %w[default yellow red blue green].each do |color| %>
+          <label class="cursor-pointer">
+            <%= form.radio_button :color, color, class: "sr-only peer" %>
+            <div class="w-8 h-8 rounded-full border-2 border-gray-300 peer-checked:border-gray-900 <%= color == 'default' ? 'bg-white' : "bg-#{color}-200" %>"></div>
+          </label>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="flex-1">
+      <%= form.label :pinned, class: "inline-flex items-center cursor-pointer" do %>
+        <%= form.check_box :pinned, class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+        <span class="ml-2 text-sm text-gray-700"><%= t("activerecord.attributes.note.pinned") %></span>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center pt-4 border-t">
+    <span id="save-status" class="text-sm text-gray-500"></span>
+
+    <div class="flex space-x-2">
+      <%= link_to "Cancel", notes_path, class: "px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <%= form.submit note.persisted? ? "Update Note" : "Create Note", class: "px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+    </div>
+  </div>
+<% end %>
