@@ -41,10 +41,12 @@ class NotesController < ApplicationController
   def update
     @note.version_user = current_user
     if @note.update(note_params)
-      @note.unlock! # Release lock after successful update
       respond_to do |format|
-        format.html { redirect_to notes_path, notice: t("notes.updated") }
-        format.turbo_stream
+        format.html do
+          @note.unlock! # Only release lock when explicitly saving (not autosave)
+          redirect_to notes_path, notice: t("notes.updated")
+        end
+        format.turbo_stream # Autosave - keep lock active
       end
     else
       render :edit, status: :unprocessable_entity

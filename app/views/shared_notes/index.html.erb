@@ -1,8 +1,11 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <!-- Header -->
   <header class="bg-white dark:bg-gray-800 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("shared_notes.title") %></h1>
+      <%= link_to notes_path, class: "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white", title: t("notes.home"), "aria-label": t("notes.home") do %>
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><title><%= t("notes.home") %></title><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <% end %>
     </div>
   </header>
 
@@ -11,10 +14,7 @@
     <% if @shared_notes.any? %>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <% @shared_notes.each do |note| %>
-          <%
-            note_color = note.color == "default" ? "bg-white dark:bg-gray-800" : "bg-#{note.color}-100 dark:bg-#{note.color}-900/20"
-          %>
-          <div class="<%= note_color %> border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+          <div class="<%= note_card_color_class(note.color) %> border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
             <%= link_to edit_note_path(note), class: "block" do %>
               <% if note.title.present? %>
                 <h3 class="font-medium text-gray-900 dark:text-gray-100 mb-2"><%= note.title %></h3>

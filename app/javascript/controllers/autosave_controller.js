@@ -21,8 +21,25 @@ export default class extends Controller {
     const form = this.element
     const formData = new FormData(form)
 
-    // Use Turbo to submit the form
-    this.element.requestSubmit()
+    // Don't submit if this is a new note (not persisted yet)
+    const action = form.action
+    if (!action || action.endsWith('/notes')) {
+      return
+    }
+
+    // Use fetch to save without redirecting
+    fetch(action, {
+      method: 'PATCH',
+      body: formData,
+      headers: {
+        'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content,
+        'Accept': 'text/vnd.turbo-stream.html'
+      }
+    }).then(response => {
+      if (response.ok) {
+        this.showSaveStatus("Saved")
+      }
+    })
   }
 
   saved(event) {

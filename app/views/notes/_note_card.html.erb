@@ -1,5 +1,5 @@
 <%
-  note_color = note.color == "default" ? "bg-white dark:bg-gray-800" : "bg-#{note.color}-100 dark:bg-#{note.color}-900/20"
+  note_color = note_card_color_class(note.color)
   is_shared = note.user_id != current_user.id
   can_edit = note.user_id == current_user.id || note.can_be_edited_by?(current_user)
   is_locked_by_other = note.locked? && !note.locked_by?(current_user)
@@ -76,18 +76,18 @@
       <div class="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
         <div class="flex space-x-2">
           <% if note.pinned? %>
-            <%= button_to unpin_note_path(note), method: :patch, class: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" do %>
-              <svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z"/></svg>
+            <%= button_to unpin_note_path(note), method: :patch, class: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300", title: t("notes.unpin"), "aria-label": t("notes.unpin") do %>
+              <svg class="w-5 h-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title><%= t("notes.unpin") %></title><path d="M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z"/></svg>
             <% end %>
           <% else %>
-            <%= button_to pin_note_path(note), method: :patch, class: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" do %>
-              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            <%= button_to pin_note_path(note), method: :patch, class: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300", title: t("notes.pin"), "aria-label": t("notes.pin") do %>
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title><%= t("notes.pin") %></title><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
             <% end %>
           <% end %>
         </div>
 
-        <%= button_to note_path(note), method: :delete, data: { turbo_confirm: t("notes.delete_confirm") }, class: "text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400" do %>
-          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        <%= button_to note_path(note), method: :delete, data: { turbo_confirm: t("notes.delete_confirm") }, class: "text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400", title: t("notes.delete"), "aria-label": t("notes.delete") do %>
+          <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title><%= t("notes.delete") %></title><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
         <% end %>
       </div>
     <% end %>
