@@ -25,23 +25,38 @@
           </span>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            <%= t("versions.title") %>
-          </label>
-          <p class="text-gray-900 dark:text-white"><%= @version.title %></p>
-        </div>
+        <% changes = @version.changes_from_previous %>
+        <% if changes.any? %>
+          <div class="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h3 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">Changes in this version:</h3>
+
+            <% changes.each do |field, (old_value, new_value)| %>
+              <div class="mb-4 last:mb-0">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 capitalize">
+                  <%= field %>
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">Before:</span>
+                    <div class="p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded text-sm text-gray-900 dark:text-gray-100">
+                      <%= field == :content ? simple_format(old_value.to_s.truncate(200)) : old_value %>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 block mb-1">After:</span>
+                    <div class="p-3 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded text-sm text-gray-900 dark:text-gray-100">
+                      <%= field == :content ? simple_format(new_value.to_s.truncate(200)) : new_value %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            <%= t("versions.color") %>
-          </label>
-          <p class="text-gray-900 dark:text-white"><%= @version.color %></p>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            <%= t("versions.content") %>
+            <%= t("versions.content") %> (Full)
           </label>
           <div class="prose dark:prose-invert max-w-none p-4 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
             <%= simple_format(@version.content) %>

@@ -87,7 +87,10 @@ class Note < ApplicationRecord
   end
 
   def create_version_on_update
-    return unless saved_change_to_title? || saved_change_to_color? || content.body.present?
+    # Only create version if something actually changed
+    has_changes = saved_change_to_title? || saved_change_to_color? || saved_change_to_content?
+    return unless has_changes
+
     create_version("updated")
   end
 
