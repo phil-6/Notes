@@ -4,7 +4,7 @@
   </div>
 
   <div>
-    <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border-0 focus:ring-0 focus:outline-none bg-transparent", data: { autosave_target: "input", action: "trix-change->autosave#scheduleAutoSave" } %>
+    <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border-0 focus:ring-0 focus:outline-none bg-transparent", data: { autosave_target: "input", action: "lexxy:change->autosave#scheduleAutoSave" } %>
   </div>
 
   <div class="space-y-4">
