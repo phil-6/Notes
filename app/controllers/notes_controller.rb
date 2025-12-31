@@ -1,4 +1,6 @@
 class NotesController < ApplicationController
+  include ActionView::RecordIdentifier
+
   before_action :authenticate_user!
   before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin, :lock, :unlock ]
   before_action :check_edit_permission, only: [ :edit, :update ]

@@ -63,6 +63,9 @@ group :development do
 end
 
 group :test do
+  # Pin minitest to v5.x for compatibility
+  gem "minitest", "~> 5.0"
+
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"

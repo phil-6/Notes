@@ -1,9 +1,15 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Connections between users
+alice_bob:
+  user_1: alice
+  user_2: bob
+  status: accepted
 
-one:
-  user_1_id: 
-  user_2_id: 
+alice_charlie_pending:
+  user_1: alice
+  user_2: charlie
+  status: pending
 
-two:
-  user_1_id: 
-  user_2_id: 
+bob_charlie:
+  user_1: bob
+  user_2: charlie
+  status: accepted

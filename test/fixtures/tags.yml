@@ -1,7 +1,9 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Tags
+work:
+  name: Work
 
-one:
-  name: MyString
+personal:
+  name: Personal
 
-two:
-  name: MyString
+ideas:
+  name: Ideas

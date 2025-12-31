@@ -13,3 +13,14 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ActionDispatch
+  class IntegrationTest
+    # Helper method to sign in a user in integration tests
+    def sign_in_as(user)
+      post sign_in_url, params: { email: user.email, password: "password123" }
+      assert_redirected_to root_url
+      follow_redirect!
+    end
+  end
+end

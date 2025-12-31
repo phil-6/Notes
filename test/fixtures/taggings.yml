@@ -1,9 +1,2 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  note: one
-  tag: one
-
-two:
-  note: two
-  tag: two
+# Taggings (note-tag associations)
+# Empty for now - add specific taggings if needed for tests
