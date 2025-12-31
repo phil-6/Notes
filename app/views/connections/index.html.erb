@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("connections.title") %></h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Add Connection Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("connections.add_connection") %></h2>
+      <%= form_with url: connections_path, method: :post, class: "flex gap-4" do |form| %>
+        <div class="flex-1">
+          <%= email_field_tag :email, nil, placeholder: t("connections.enter_email"), required: true, class: "w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        </div>
+        <%= submit_tag t("connections.send_request"), class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <% end %>
+    </div>
+
+    <!-- Pending Requests -->
+    <% if @pending_requests.any? %>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("connections.pending_requests") %></h2>
+        <div class="space-y-3">
+          <% @pending_requests.each do |connection| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white"><%= connection.user_1.display_name %></p>
+                <p class="text-sm text-gray-600 dark:text-gray-400"><%= connection.user_1.email %></p>
+              </div>
+              <div class="flex gap-2">
+                <%= button_to t("connections.accept"), accept_connection_path(connection), method: :patch, class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm" %>
+                <%= button_to t("connections.reject"), reject_connection_path(connection), method: :patch, class: "px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Sent Requests -->
+    <% if @sent_requests.any? %>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("connections.sent_requests") %></h2>
+        <div class="space-y-3">
+          <% @sent_requests.each do |connection| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white"><%= connection.user_2.display_name %></p>
+                <p class="text-sm text-gray-600 dark:text-gray-400"><%= connection.user_2.email %></p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">Pending</p>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- My Connections -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("connections.my_connections") %></h2>
+      <% if @connections.any? %>
+        <div class="space-y-3">
+          <% @connections.each do |user| %>
+            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <div>
+                <p class="font-medium text-gray-900 dark:text-white"><%= user.display_name %></p>
+                <p class="text-sm text-gray-600 dark:text-gray-400"><%= user.email %></p>
+              </div>
+              <% connection = current_user.connections.find_by("(user_1_id = ? AND user_2_id = ?) OR (user_1_id = ? AND user_2_id = ?)", current_user.id, user.id, user.id, current_user.id) %>
+              <%= button_to t("connections.remove"), connection_path(connection), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm" %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-gray-500 dark:text-gray-400 text-center py-8"><%= t("connections.no_connections") %></p>
+      <% end %>
+    </div>
+  </main>
+</div>

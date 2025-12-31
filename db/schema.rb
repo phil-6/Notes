@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_170927) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_174611) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -51,9 +51,11 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_170927) do
 
   create_table "connections", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "status", default: "pending", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_1_id", null: false
     t.bigint "user_2_id", null: false
+    t.index ["status"], name: "index_connections_on_status"
     t.index ["user_1_id", "user_2_id"], name: "index_connections_on_user_1_id_and_user_2_id", unique: true
     t.index ["user_1_id"], name: "index_connections_on_user_1_id"
     t.index ["user_2_id"], name: "index_connections_on_user_2_id"

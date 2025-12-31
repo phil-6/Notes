@@ -16,6 +16,18 @@ Rails.application.routes.draw do
       patch :pin
       patch :unpin
     end
+    resources :shared_notes, only: [ :create, :destroy ]
+  end
+
+  # Shared Notes
+  get "shared_with_me", to: "shared_notes#index", as: :shared_with_me
+
+  # Connections
+  resources :connections, only: [ :index, :create, :destroy ] do
+    member do
+      patch :accept
+      patch :reject
+    end
   end
 
   # Preferences

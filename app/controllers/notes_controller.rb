@@ -57,7 +57,7 @@ class NotesController < ApplicationController
 
   private
   def set_note
-    @note = current_user.notes.find(params[:id])
+    @note = current_user.notes.includes(shared_withs: :user).find(params[:id])
   end
 
   def note_params

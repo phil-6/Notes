@@ -1,0 +1,32 @@
+<div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("notes.share") %></h3>
+
+  <% if current_user.connected_users.any? %>
+    <!-- Share Form -->
+    <%= form_with url: note_shared_notes_path(note), method: :post, class: "mb-4" do |form| %>
+      <div class="flex gap-2">
+        <%= select_tag :user_id, options_from_collection_for_select(current_user.connected_users, :id, :display_name), { prompt: t("shared_notes.select_connection") }, class: "flex-1 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+        <%= submit_tag t("shared_notes.share_note"), class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm" %>
+      </div>
+    <% end %>
+
+    <!-- Already Shared With -->
+    <% if note.shared_with_users.any? %>
+      <div class="mt-4">
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"><%= t("notes.shared_with") %>:</p>
+        <div class="space-y-2">
+          <% note.shared_withs.includes(:user).each do |shared_with| %>
+            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <span class="text-sm text-gray-900 dark:text-white"><%= shared_with.user.display_name %></span>
+              <%= button_to t("shared_notes.unshare"), note_shared_note_path(note, shared_with), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "text-sm text-red-600 dark:text-red-400 hover:text-red-800" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="text-sm text-gray-600 dark:text-gray-400">
+      <%= t("connections.no_connections") %>. <%= link_to t("connections.add_connection"), connections_path, class: "text-blue-600 dark:text-blue-400 hover:underline" %>
+    </p>
+  <% end %>
+</div>

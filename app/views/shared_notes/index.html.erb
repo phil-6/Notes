@@ -1,0 +1,44 @@
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <!-- Header -->
+  <header class="bg-white dark:bg-gray-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("shared_notes.title") %></h1>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <% if @shared_notes.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <% @shared_notes.each do |note| %>
+          <%
+            note_color = note.color == "default" ? "bg-white dark:bg-gray-800" : "bg-#{note.color}-100 dark:bg-#{note.color}-900/20"
+          %>
+          <div class="<%= note_color %> border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200">
+            <%= link_to edit_note_path(note), class: "block" do %>
+              <% if note.title.present? %>
+                <h3 class="font-medium text-gray-900 dark:text-gray-100 mb-2"><%= note.title %></h3>
+              <% end %>
+
+              <% if note.content.present? %>
+                <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 prose prose-sm max-w-none mb-3">
+                  <%= note.content.to_plain_text.truncate(200) %>
+                </div>
+              <% end %>
+
+              <div class="mt-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  <%= t("shared_notes.shared_by") %>: <%= note.user.display_name %>
+                </p>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-12">
+        <p class="text-gray-500 dark:text-gray-400 text-lg"><%= t("shared_notes.no_shared_notes") %></p>
+      </div>
+    <% end %>
+  </main>
+</div>
