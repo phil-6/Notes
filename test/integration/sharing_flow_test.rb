@@ -11,22 +11,25 @@ class SharingFlowTest < ActionDispatch::IntegrationTest
   test "user can share note with connected user" do
     sign_in_as(@alice)
 
-    get edit_note_url(@alice_note)
+    # Create a new note that isn't shared yet
+    new_note = @alice.notes.create!(title: "New Note for Sharing", color: "blue")
+
+    get edit_note_url(new_note)
     assert_response :success
 
     # Share with Bob (connected)
     assert_difference("SharedWith.count") do
-      post note_shared_notes_url(@alice_note), params: {
+      post note_shared_notes_url(new_note), params: {
         user_id: @bob.id,
         can_edit: true
       }
     end
 
-    assert_redirected_to edit_note_url(@alice_note)
+    assert_redirected_to edit_note_url(new_note)
     follow_redirect!
 
     shared_with = SharedWith.last
-    assert_equal @alice_note, shared_with.note
+    assert_equal new_note, shared_with.note
     assert_equal @bob, shared_with.user
     assert shared_with.can_edit
   end
@@ -34,8 +37,11 @@ class SharingFlowTest < ActionDispatch::IntegrationTest
   test "user can share note with read-only permission" do
     sign_in_as(@alice)
 
+    # Create a new note for this test
+    new_note = @alice.notes.create!(title: "Another Note for Sharing", color: "green")
+
     assert_difference("SharedWith.count") do
-      post note_shared_notes_url(@alice_note), params: {
+      post note_shared_notes_url(new_note), params: {
         user_id: @bob.id,
         can_edit: false
       }
@@ -88,19 +94,25 @@ class SharingFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "user cannot share note with non-connected user" do
-    sign_in_as(@bob)
-    bob_note = notes(:bob_note)
+    sign_in_as(@alice)
 
-    # Bob and Charlie are connected, but let's test with a non-connected scenario
-    # First, we need to disconnect them or use a different user
-    # For simplicity, we'll test that sharing requires connection
+    # Create a new user who isn't connected to Alice
+    non_connected_user = User.create!(
+      email: "nonconnected@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      display_name: "Not Connected"
+    )
 
+    new_note = @alice.notes.create!(title: "Private Note", color: "red")
+
+    # Should not be able to share with non-connected user
     assert_no_difference("SharedWith.count") do
-      post note_shared_notes_url(bob_note), params: {
-        user_id: @charlie.id
+      post note_shared_notes_url(new_note), params: {
+        user_id: non_connected_user.id
       }
     end
 
-    assert_redirected_to edit_note_url(bob_note)
+    assert_redirected_to edit_note_url(new_note)
   end
 end
