@@ -1,6 +1,8 @@
 class NotesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin ]
+  before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin, :lock, :unlock ]
+  before_action :check_edit_permission, only: [ :edit, :update ]
+  before_action :acquire_lock, only: [ :edit ]
 
   def index
     # Combine owned notes and shared notes
@@ -31,11 +33,13 @@ class NotesController < ApplicationController
   end
 
   def edit
+    # Lock is acquired in before_action
   end
 
   def update
     @note.version_user = current_user
     if @note.update(note_params)
+      @note.unlock! # Release lock after successful update
       respond_to do |format|
         format.html { redirect_to notes_path, notice: t("notes.updated") }
         format.turbo_stream
@@ -69,13 +73,47 @@ class NotesController < ApplicationController
     end
   end
 
+  def lock
+    if @note.lock!(current_user)
+      render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note })
+    else
+      head :unprocessable_entity
+    end
+  end
+
+  def unlock
+    if @note.locked_by?(current_user) || @note.user == current_user
+      @note.unlock!
+      respond_to do |format|
+        format.html { redirect_to notes_path }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
+      end
+    else
+      head :forbidden
+    end
+  end
+
   private
   def set_note
     # Allow access to owned notes and shared notes
-    owned_note = current_user.notes.includes(shared_withs: :user).find_by(id: params[:id])
-    shared_note = current_user.shared_notes.includes(:user, shared_withs: :user).find_by(id: params[:id])
+    owned_note = current_user.notes.includes(:user, :locked_by, shared_withs: :user).find_by(id: params[:id])
+    shared_note = current_user.shared_notes.includes(:user, :locked_by, shared_withs: :user).find_by(id: params[:id])
     @note = owned_note || shared_note
     redirect_to notes_path, alert: "Note not found" unless @note
+  end
+
+  def check_edit_permission
+    unless @note.can_be_edited_by?(current_user)
+      redirect_to notes_path, alert: t("notes.cannot_edit")
+    end
+  end
+
+  def acquire_lock
+    if @note.locked? && !@note.locked_by?(current_user)
+      redirect_to notes_path, alert: t("notes.locked_by_other", user: @note.locked_by.display_name)
+    else
+      @note.lock!(current_user)
+    end
   end
 
   def note_params

@@ -1,18 +1,42 @@
-<%= turbo_frame_tag "note_editor" do %>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("notes.edit_note") %></h2>
-      <div class="flex items-center gap-4">
+<%= turbo_frame_tag dom_id(@note, :edit) do %>
+  <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300"><%= t("notes.editing") %></span>
+      <div class="flex items-center gap-2">
         <%= link_to t("versions.view_history"),
             note_versions_path(@note),
             target: "_top",
-            class: "text-sm text-blue-600 dark:text-blue-400 hover:underline" %>
-        <%= link_to "×", notes_path, class: "text-3xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 leading-none" %>
+            class: "text-xs text-blue-600 dark:text-blue-400 hover:underline" %>
+        <%= link_to "×", notes_path, data: { turbo_frame: dom_id(@note) }, class: "text-2xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 leading-none" %>
       </div>
     </div>
-    <%= render "form", note: @note %>
-    <% if !@note.shared_withs.empty? || current_user.connected_users.any? %>
-      <%= render "share", note: @note %>
+
+    <%= form_with model: @note, data: { turbo_frame: dom_id(@note), controller: "autosave", autosave_url_value: note_path(@note), action: "turbo:submit-end->autosave#saved" }, class: "space-y-3" do |form| %>
+      <div>
+        <%= form.text_field :title, placeholder: t("activerecord.attributes.note.title"), class: "w-full text-lg font-medium border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent", data: { autosave_target: "input", action: "input->autosave#scheduleAutoSave" } %>
+      </div>
+
+      <div>
+        <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white", data: { autosave_target: "input", action: "trix-change->autosave#scheduleAutoSave" } %>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="flex-1">
+          <div class="flex gap-1">
+            <% Note::COLORS.first(12).each do |color| %>
+              <label class="cursor-pointer" title="<%= color.capitalize %>">
+                <%= form.radio_button :color, color, class: "sr-only peer" %>
+                <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 peer-checked:ring-2 peer-checked:ring-blue-500 hover:scale-110 transition-transform <%= color == 'default' ? 'bg-white dark:bg-gray-800' : "bg-#{color}-300 dark:bg-#{color}-700" %>"></div>
+              </label>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span id="save-status" class="text-xs text-gray-500"></span>
+          <%= form.submit t("common.save"), class: "px-3 py-1 text-sm border border-transparent rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        </div>
+      </div>
     <% end %>
   </div>
 <% end %>

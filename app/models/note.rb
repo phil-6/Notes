@@ -1,5 +1,6 @@
 class Note < ApplicationRecord
   belongs_to :user
+  belongs_to :locked_by, class_name: "User", optional: true
 
   has_rich_text :content
   has_many :taggings, dependent: :destroy
@@ -12,6 +13,8 @@ class Note < ApplicationRecord
     default slate gray zinc stone red orange amber yellow lime green emerald
     teal cyan sky blue indigo violet purple fuchsia pink rose
   ].freeze
+
+  LOCK_TIMEOUT = 5.minutes
 
   validates :color, inclusion: { in: COLORS, allow_nil: true }
 
@@ -38,6 +41,36 @@ class Note < ApplicationRecord
 
   def current_version_number
     versions.maximum(:version_number) || 0
+  end
+
+  # Locking methods
+  def lock!(user)
+    update(locked_by: user, locked_at: Time.current)
+  end
+
+  def unlock!
+    update(locked_by: nil, locked_at: nil)
+  end
+
+  def locked?
+    locked_by_id.present? && locked_at.present? && locked_at > LOCK_TIMEOUT.ago
+  end
+
+  def locked_by?(user)
+    locked? && locked_by_id == user.id
+  end
+
+  def can_be_edited_by?(user)
+    return true if user_id == user.id # Owner can always edit
+    return false unless locked? || !locked_by?(user) # Can't edit if locked by someone else
+
+    shared_with = shared_withs.find_by(user: user)
+    shared_with&.can_edit? || false
+  end
+
+  def editable_by?(user)
+    return true if user_id == user.id
+    !locked? || locked_by?(user)
   end
 
   private

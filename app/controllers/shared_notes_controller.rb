@@ -10,16 +10,19 @@ class SharedNotesController < ApplicationController
     recipient = User.find(params[:user_id])
 
     unless current_user.connected_with?(recipient)
-      redirect_to @note, alert: t("shared_notes.not_connected")
+      redirect_to edit_note_path(@note), alert: t("shared_notes.not_connected")
       return
     end
 
-    @shared_with = @note.shared_withs.build(user: recipient)
+    @shared_with = @note.shared_withs.build(
+      user: recipient,
+      can_edit: params[:can_edit] == "1" || params[:can_edit] == true
+    )
 
     if @shared_with.save
-      redirect_to @note, notice: t("shared_notes.shared")
+      redirect_to edit_note_path(@note), notice: t("shared_notes.shared")
     else
-      redirect_to @note, alert: t("shared_notes.share_failed")
+      redirect_to edit_note_path(@note), alert: t("shared_notes.share_failed")
     end
   end
 
@@ -31,8 +34,9 @@ class SharedNotesController < ApplicationController
       return
     end
 
+    note = @shared_with.note
     @shared_with.destroy
-    redirect_to @shared_with.note, notice: t("shared_notes.unshared")
+    redirect_to edit_note_path(note), notice: t("shared_notes.unshared")
   end
 
   private
