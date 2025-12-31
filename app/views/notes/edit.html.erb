@@ -17,7 +17,7 @@
       </div>
 
       <div>
-        <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white", data: { autosave_target: "input", action: "trix-change->autosave#scheduleAutoSave" } %>
+        <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white", data: { autosave_target: "input", action: "lexxy:change->autosave#scheduleAutoSave" } %>
       </div>
 
       <div class="flex items-center gap-4">
@@ -26,7 +26,7 @@
             <% Note::COLORS.first(12).each do |color| %>
               <label class="cursor-pointer" title="<%= color.capitalize %>">
                 <%= form.radio_button :color, color, class: "sr-only peer" %>
-                <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 peer-checked:ring-2 peer-checked:ring-blue-500 hover:scale-110 transition-transform <%= color == 'default' ? 'bg-white dark:bg-gray-800' : "bg-#{color}-300 dark:bg-#{color}-700" %>"></div>
+                <div class="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-600 peer-checked:ring-2 peer-checked:ring-blue-500 hover:scale-110 transition-transform <%= color_preview_class(color) %>"></div>
               </label>
             <% end %>
           </div>

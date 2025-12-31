@@ -1,0 +1,81 @@
+/* Lexxy editor styling for light and dark modes */
+
+lexxy-editor {
+  display: block;
+  min-height: 200px;
+  padding: 0.75rem;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #111827; /* gray-900 */
+}
+
+/* Dark mode text color */
+.dark lexxy-editor {
+  color: #f9fafb; /* gray-50 */
+}
+
+/* Placeholder styling */
+lexxy-editor:empty::before {
+  content: attr(placeholder);
+  color: #9ca3af; /* gray-400 */
+  pointer-events: none;
+}
+
+.dark lexxy-editor:empty::before {
+  color: #6b7280; /* gray-500 */
+}
+
+/* Focus state */
+lexxy-editor:focus {
+  outline: none;
+}
+
+/* Basic formatting elements */
+lexxy-editor strong {
+  font-weight: 600;
+}
+
+lexxy-editor em {
+  font-style: italic;
+}
+
+lexxy-editor a {
+  color: #2563eb; /* blue-600 */
+  text-decoration: underline;
+}
+
+.dark lexxy-editor a {
+  color: #60a5fa; /* blue-400 */
+}
+
+lexxy-editor ul,
+lexxy-editor ol {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+lexxy-editor ul {
+  list-style-type: disc;
+}
+
+lexxy-editor ol {
+  list-style-type: decimal;
+}
+
+lexxy-editor li {
+  margin: 0.25rem 0;
+}
+
+lexxy-editor p {
+  margin: 0.5rem 0;
+}
+
+lexxy-editor p:first-child {
+  margin-top: 0;
+}
+
+lexxy-editor p:last-child {
+  margin-bottom: 0;
+}
