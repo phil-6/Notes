@@ -17,6 +17,11 @@ Rails.application.routes.draw do
       patch :unpin
     end
     resources :shared_notes, only: [ :create, :destroy ]
+    resources :versions, controller: "note_versions", only: [ :index, :show ] do
+      member do
+        post :restore
+      end
+    end
   end
 
   # Shared Notes

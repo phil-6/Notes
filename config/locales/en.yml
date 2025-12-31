@@ -112,3 +112,28 @@ en:
     unauthorized: "You are not authorized to perform this action"
     no_shared_notes: "No notes have been shared with you yet"
     shared_by: "Shared by"
+
+  versions:
+    history: "Version History"
+    view_history: "View History"
+    current_version: "Current Version"
+    version_number: "Version #%{number}"
+    title: "Title"
+    content: "Content"
+    color: "Color"
+    metadata: "Metadata"
+    change_type: "Change Type"
+    change_types:
+      created: "Created"
+      updated: "Updated"
+      restored: "Restored"
+      shared: "Shared"
+      unshared: "Unshared"
+    created_by: "By %{name}, %{time} ago"
+    restore: "Restore"
+    restore_confirm: "Are you sure you want to restore this version? This will create a new version with this content."
+    restored: "Version restored successfully"
+    no_versions: "No version history available"
+
+  common:
+    back: "Back"

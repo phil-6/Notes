@@ -15,6 +15,7 @@ class NotesController < ApplicationController
 
   def create
     @note = current_user.notes.new(note_params)
+    @note.version_user = current_user
 
     if @note.save
       respond_to do |format|
@@ -30,6 +31,7 @@ class NotesController < ApplicationController
   end
 
   def update
+    @note.version_user = current_user
     if @note.update(note_params)
       respond_to do |format|
         format.html { redirect_to notes_path, notice: t("notes.updated") }

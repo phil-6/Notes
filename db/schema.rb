@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_174611) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_31_181222) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -70,6 +70,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_174611) do
     t.index ["user_id"], name: "index_devices_on_user_id"
   end
 
+  create_table "note_versions", force: :cascade do |t|
+    t.string "change_type", default: "updated", null: false
+    t.string "color"
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.integer "created_by_id", null: false
+    t.integer "note_id", null: false
+    t.text "title"
+    t.datetime "updated_at", null: false
+    t.integer "version_number", null: false
+    t.index ["created_by_id"], name: "index_note_versions_on_created_by_id"
+    t.index ["note_id", "version_number"], name: "index_note_versions_on_note_id_and_version_number", unique: true
+    t.index ["note_id"], name: "index_note_versions_on_note_id"
+  end
+
   create_table "notes", force: :cascade do |t|
     t.string "color", default: "default"
     t.datetime "created_at", null: false
@@ -121,6 +136,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_174611) do
   add_foreign_key "connections", "users", column: "user_1_id"
   add_foreign_key "connections", "users", column: "user_2_id"
   add_foreign_key "devices", "users"
+  add_foreign_key "note_versions", "notes"
+  add_foreign_key "note_versions", "users", column: "created_by_id"
   add_foreign_key "notes", "users"
   add_foreign_key "shared_withs", "notes"
   add_foreign_key "shared_withs", "users"
