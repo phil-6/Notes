@@ -16,9 +16,9 @@
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4"><%= t("connections.add_connection") %></h2>
       <%= form_with url: connections_path, method: :post, class: "flex gap-4" do |form| %>
         <div class="flex-1">
-          <%= email_field_tag :email, nil, placeholder: t("connections.enter_email"), required: true, class: "w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" %>
+          <%= email_field_tag :email, nil, placeholder: t("connections.enter_email"), required: true, class: "w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors" %>
         </div>
-        <%= submit_tag t("connections.send_request"), class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+        <%= submit_tag t("connections.send_request"), class: "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm font-medium" %>
       <% end %>
     </div>
 
