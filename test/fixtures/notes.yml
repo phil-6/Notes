@@ -1,13 +1,40 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Test notes
+alice_note_one:
+  user: alice
+  title: Alice's First Note
+  color: blue
+  pinned: true
+  locked_by:
+  locked_at:
 
-one:
-  user: one
-  title: MyString
-  color: MyString
+alice_note_two:
+  user: alice
+  title: Alice's Second Note
+  color: green
   pinned: false
+  locked_by:
+  locked_at:
 
-two:
-  user: two
-  title: MyString
-  color: MyString
+bob_note:
+  user: bob
+  title: Bob's Note
+  color: default
   pinned: false
+  locked_by:
+  locked_at:
+
+charlie_note:
+  user: charlie
+  title: Charlie's Note
+  color: red
+  pinned: false
+  locked_by:
+  locked_at:
+
+locked_note:
+  user: alice
+  title: Locked Note
+  color: yellow
+  pinned: false
+  locked_by: alice
+  locked_at: <%= 2.minutes.ago %>

@@ -1,9 +1,15 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Shared notes with permissions
+alice_shares_with_bob_can_edit:
+  note: alice_note_one
+  user: bob
+  can_edit: true
 
-one:
-  note: one
-  user: one
+alice_shares_with_charlie_read_only:
+  note: alice_note_two
+  user: charlie
+  can_edit: false
 
-two:
-  note: two
-  user: two
+bob_shares_with_alice:
+  note: bob_note
+  user: alice
+  can_edit: true

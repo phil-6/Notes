@@ -1,11 +1,18 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Test users with realistic data
+alice:
+  email: alice@example.com
+  password_digest: <%= BCrypt::Password.create('password123', cost: 4) %>
+  display_name: Alice Smith
+  dark_mode: false
 
-one:
-  email: MyString
-  password_digest: MyString
-  display_name: MyString
+bob:
+  email: bob@example.com
+  password_digest: <%= BCrypt::Password.create('password123', cost: 4) %>
+  display_name: Bob Jones
+  dark_mode: true
 
-two:
-  email: MyString
-  password_digest: MyString
-  display_name: MyString
+charlie:
+  email: charlie@example.com
+  password_digest: <%= BCrypt::Password.create('password123', cost: 4) %>
+  display_name: Charlie Brown
+  dark_mode: false
