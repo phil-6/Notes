@@ -3,7 +3,10 @@ class NotesController < ApplicationController
   before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin ]
 
   def index
-    @notes = current_user.notes.order(pinned: :desc, updated_at: :desc)
+    # Combine owned notes and shared notes
+    owned_notes = current_user.notes.includes(:user, :rich_text_content)
+    shared_notes = current_user.shared_notes.includes(:user, :rich_text_content)
+    @notes = (owned_notes + shared_notes).sort_by { |n| [ n.pinned? ? 0 : 1, -n.updated_at.to_i ] }
   end
 
   def show
@@ -44,22 +47,35 @@ class NotesController < ApplicationController
 
   def destroy
     @note.destroy
-    redirect_to notes_path, notice: t("notes.destroyed")
+    respond_to do |format|
+      format.html { redirect_to notes_path, notice: t("notes.destroyed") }
+      format.turbo_stream
+    end
   end
 
   def pin
     @note.update(pinned: true)
-    redirect_to notes_path, notice: t("notes.pinned")
+    respond_to do |format|
+      format.html { redirect_to notes_path, notice: t("notes.pinned") }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
+    end
   end
 
   def unpin
     @note.update(pinned: false)
-    redirect_to notes_path, notice: t("notes.unpinned")
+    respond_to do |format|
+      format.html { redirect_to notes_path, notice: t("notes.unpinned") }
+      format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
+    end
   end
 
   private
   def set_note
-    @note = current_user.notes.includes(shared_withs: :user).find(params[:id])
+    # Allow access to owned notes and shared notes
+    owned_note = current_user.notes.includes(shared_withs: :user).find_by(id: params[:id])
+    shared_note = current_user.shared_notes.includes(:user, shared_withs: :user).find_by(id: params[:id])
+    @note = owned_note || shared_note
+    redirect_to notes_path, alert: "Note not found" unless @note
   end
 
   def note_params

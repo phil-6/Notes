@@ -74,6 +74,8 @@ en:
     other_notes: "Other Notes"
     share: "Share"
     shared_with: "Shared with"
+    delete_confirm: "Are you sure you want to delete this note?"
+    select_or_create: "Select a note to edit or create a new one"
 
   connections:
     title: "Connections"

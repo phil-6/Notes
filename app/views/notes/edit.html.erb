@@ -1,14 +1,18 @@
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("notes.edit_note") %></h2>
+<%= turbo_frame_tag "note_editor" do %>
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("notes.edit_note") %></h2>
+      <div class="flex items-center gap-4">
         <%= link_to t("versions.view_history"),
             note_versions_path(@note),
+            target: "_top",
             class: "text-sm text-blue-600 dark:text-blue-400 hover:underline" %>
+        <%= link_to "×", notes_path, class: "text-3xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 leading-none" %>
       </div>
-      <%= render "form", note: @note %>
-      <%= render "share", note: @note %>
     </div>
+    <%= render "form", note: @note %>
+    <% if !@note.shared_withs.empty? || current_user.connected_users.any? %>
+      <%= render "share", note: @note %>
+    <% end %>
   </div>
-</div>
+<% end %>
