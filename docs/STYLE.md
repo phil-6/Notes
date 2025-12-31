@@ -56,6 +56,32 @@ When you feel you need a comment to explain what code does, first try to refacto
 
 We should aim to keep our code as close to the Rails defaults as possible. This helps with maintainability, and makes it easier for new developers to get up to speed. It also makes upgrading Rails versions easier. Follow Rails conventions and idioms. Prioritize "Convention over Configuration".
 
+### Minimal Dependencies
+
+**Keep dependencies to an absolute minimum.** Every dependency is a liability that can break, require updates, or introduce security vulnerabilities.
+
+**No Node.js Required:**
+- This project runs entirely on Ruby/Rails
+- We use importmap-rails for JavaScript (no npm, webpack, or node_modules)
+- We use propshaft for asset pipeline (simpler than Sprockets)
+- Tailwind CSS uses the standalone executable via tailwindcss-rails gem (no Node.js needed)
+- Stimulus controllers are loaded via importmap
+
+**Before Adding Any Dependency:**
+1. Can Rails/Ruby do this already?
+2. Can we write a simple solution ourselves?
+3. Is the gem actively maintained?
+4. What's the maintenance burden?
+5. Does it require additional infrastructure (Node.js, Redis, etc.)?
+
+**Prefer Rails Defaults:**
+- Solid Queue over Sidekiq (no Redis required)
+- Solid Cache over Redis/Memcached
+- Solid Cable over Action Cable with Redis
+- SQLite3 for development (simple, no server required)
+- ActionText over third-party WYSIWYG editors
+- Hotwire over React/Vue
+
 ### Gems and Libraries
 
 We should avoid using additional gems where possible. We should discuss as a team before implementing new gems and clearly identify what pain they are solving and what benefits they bring.

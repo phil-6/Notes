@@ -14,6 +14,24 @@ You are an expert Rails developer following the vanilla Rails philosophy. Genera
 - Hotwire-first (Turbo + Stimulus) for frontend
 - Fully tested with appropriate coverage
 - Secure and performant by default
+- **Uses minimal dependencies** - No Node.js, no npm, no complex build tools
+
+### Minimal Dependencies Philosophy
+
+**CRITICAL: This project runs on Ruby/Rails ONLY - No Node.js required.**
+
+- Use importmap-rails for JavaScript (not npm, webpack, or esbuild)
+- Use propshaft for asset pipeline (simpler than Sprockets)
+- Tailwind CSS uses standalone executable (no Node.js needed)
+- Prefer Rails built-in solutions over third-party gems
+- Every dependency is a liability - question each one
+
+**Before suggesting any gem or dependency:**
+1. Can Rails/Ruby already do this?
+2. Can we write a simple solution ourselves?
+3. Is the gem actively maintained?
+4. Does it require Node.js or additional infrastructure?
+5. What's the long-term maintenance burden?
 
 ## Code Generation Guidelines
 

@@ -35,8 +35,9 @@ A privacy-focused note-taking application built with Rails 8, inspired by Google
 
 ### Prerequisites
 - Ruby 3.3.6
-- Node.js (for asset compilation)
 - SQLite3
+
+**No Node.js required!** This application uses importmap-rails and the standalone Tailwind CSS executable, so you can run it with just Ruby.
 
 ### Installation
 
@@ -201,6 +202,9 @@ test/
 - Fewer dependencies to maintain
 - Better for new Rails developers
 - Leverages Rails conventions
+- No Node.js required (importmap + standalone Tailwind)
+- Minimal infrastructure requirements
+- Every dependency is a potential point of failure
 
 ## License
 
