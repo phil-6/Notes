@@ -7,7 +7,12 @@ class Note < ApplicationRecord
   has_many :shared_withs, dependent: :destroy
   has_many :shared_with_users, through: :shared_withs, source: :user
 
-  validates :color, inclusion: { in: %w[default yellow red blue green], allow_nil: true }
+  COLORS = %w[
+    default slate gray zinc stone red orange amber yellow lime green emerald
+    teal cyan sky blue indigo violet purple fuchsia pink rose
+  ].freeze
+
+  validates :color, inclusion: { in: COLORS, allow_nil: true }
 
   scope :pinned, -> { where(pinned: true) }
   scope :unpinned, -> { where(pinned: false) }

@@ -7,23 +7,23 @@
     <%= form.rich_text_area :content, placeholder: t("activerecord.attributes.note.content"), class: "w-full border-0 focus:ring-0 focus:outline-none bg-transparent", data: { autosave_target: "input", action: "trix-change->autosave#scheduleAutoSave" } %>
   </div>
 
-  <div class="flex items-center space-x-4">
+  <div class="space-y-4">
     <div>
-      <%= form.label :color, t("activerecord.attributes.note.color"), class: "block text-sm font-medium text-gray-700 mb-1" %>
-      <div class="flex space-x-2">
-        <% %w[default yellow red blue green].each do |color| %>
-          <label class="cursor-pointer">
+      <%= form.label :color, t("activerecord.attributes.note.color"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" %>
+      <div class="grid grid-cols-10 gap-2">
+        <% Note::COLORS.each do |color| %>
+          <label class="cursor-pointer" title="<%= color.capitalize %>">
             <%= form.radio_button :color, color, class: "sr-only peer" %>
-            <div class="w-8 h-8 rounded-full border-2 border-gray-300 peer-checked:border-gray-900 <%= color == 'default' ? 'bg-white' : "bg-#{color}-200" %>"></div>
+            <div class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600 peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:ring-offset-2 hover:scale-110 transition-transform <%= color == 'default' ? 'bg-white dark:bg-gray-800' : "bg-#{color}-300 dark:bg-#{color}-700" %>"></div>
           </label>
         <% end %>
       </div>
     </div>
 
-    <div class="flex-1">
+    <div>
       <%= form.label :pinned, class: "inline-flex items-center cursor-pointer" do %>
-        <%= form.check_box :pinned, class: "rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
-        <span class="ml-2 text-sm text-gray-700"><%= t("activerecord.attributes.note.pinned") %></span>
+        <%= form.check_box :pinned, class: "rounded border-gray-300 dark:border-gray-600 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" %>
+        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300"><%= t("activerecord.attributes.note.pinned") %></span>
       <% end %>
     </div>
   </div>

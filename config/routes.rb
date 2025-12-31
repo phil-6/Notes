@@ -18,6 +18,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Preferences
+  patch "preferences", to: "preferences#update"
+
   # Root
   root "notes#index"
 end
