@@ -40,10 +40,16 @@ class NoteVersionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should only access own notes versions" do
+    # Create a note for Charlie that Bob can't access
+    charlie = users(:charlie)
+    charlie_note = charlie.notes.create!(title: "Charlie's Note", color: "blue")
+    charlie_note.version_user = charlie
+    charlie_note.update(title: "Updated")
+
     sign_in_as(@bob)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      get note_versions_url(@alice_note)
+      get note_versions_url(charlie_note)
     end
   end
 

@@ -54,14 +54,17 @@ class NotesFlowTest < ActionDispatch::IntegrationTest
   test "user can pin and unpin notes" do
     sign_in_as(@user)
 
+    # Create a new unpinned note
+    new_note = @user.notes.create!(title: "Unpinned Note", color: "blue", pinned: false)
+
     # Pin note
-    assert_not @note.pinned?
-    patch pin_note_url(@note)
-    assert @note.reload.pinned?
+    assert_not new_note.pinned?
+    patch pin_note_url(new_note)
+    assert new_note.reload.pinned?
 
     # Unpin note
-    patch unpin_note_url(@note)
-    assert_not @note.reload.pinned?
+    patch unpin_note_url(new_note)
+    assert_not new_note.reload.pinned?
   end
 
   test "user can lock and unlock notes" do
@@ -82,36 +85,38 @@ class NotesFlowTest < ActionDispatch::IntegrationTest
 
     # Update note to create versions
     @note.version_user = @user
-    original_title = @note.title
     @note.update(title: "First Update")
+    first_update_version = @note.versions.last
     @note.update(title: "Second Update")
 
     # View versions
     get note_versions_url(@note)
     assert_response :success
 
-    # Restore first version
-    first_version = @note.versions.first
-    post restore_note_version_url(@note, first_version)
+    # Restore to "First Update" version
+    post restore_note_version_url(@note, first_update_version)
 
     assert_redirected_to note_versions_url(@note)
-    assert_equal original_title, @note.reload.title
+    assert_equal "First Update", @note.reload.title
   end
 
   test "user cannot access another user's notes" do
+    # Create Charlie note (not shared with Alice)
+    charlie = users(:charlie)
+    charlie_note = charlie.notes.create!(title: "Charlie's Private Note", color: "red")
+
     sign_in_as(@user)
-    bob_note = notes(:bob_note)
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      get edit_note_url(bob_note)
+      get edit_note_url(charlie_note)
     end
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      patch note_url(bob_note), params: { note: { title: "Hacked" } }
+      patch note_url(charlie_note), params: { note: { title: "Hacked" } }
     end
 
     assert_raises(ActiveRecord::RecordNotFound) do
-      delete note_url(bob_note)
+      delete note_url(charlie_note)
     end
   end
 end

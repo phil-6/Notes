@@ -108,9 +108,9 @@ class NotesControllerTest < ActionDispatch::IntegrationTest
     @alice_note.lock!(@bob)
     sign_in_as(@alice)
     get edit_note_url(@alice_note)
-    # Owner should still be able to access, but they'll be warned
-    # Actually, based on the code, owner can still edit
-    assert_response :success
+    # Even the owner is blocked if someone else is editing
+    assert_redirected_to notes_url
+    assert_match /editing/, flash[:alert]
   end
 
   test "collaborator should be blocked from editing note locked by owner" do

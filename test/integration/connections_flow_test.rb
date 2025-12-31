@@ -8,15 +8,23 @@ class ConnectionsFlowTest < ActionDispatch::IntegrationTest
   end
 
   test "user can send, accept, and manage connection requests" do
+    # Create a new user who isn't connected to Alice
+    new_user = User.create!(
+      email: "newconnection@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      display_name: "New User"
+    )
+
     sign_in_as(@alice)
 
     # View connections page
     get connections_url
     assert_response :success
 
-    # Send connection request to Bob
+    # Send connection request to new user
     assert_difference("Connection.count") do
-      post connections_url, params: { email: @bob.email }
+      post connections_url, params: { email: new_user.email }
     end
 
     assert_redirected_to connections_url
@@ -24,9 +32,10 @@ class ConnectionsFlowTest < ActionDispatch::IntegrationTest
 
     connection = Connection.last
 
-    # Sign out and sign in as Bob
+    # Sign out and sign in as new user
     delete sign_out_url
-    sign_in_as(@bob)
+    post sign_in_url, params: { email: new_user.email, password: "password123" }
+    follow_redirect!
 
     # Bob accepts the connection
     patch accept_connection_url(connection)

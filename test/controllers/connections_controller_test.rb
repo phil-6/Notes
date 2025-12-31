@@ -19,10 +19,18 @@ class ConnectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should create connection request" do
-    sign_in_as(@bob)
+    # Create a new user who isn't connected to anyone
+    new_user = User.create!(
+      email: "newconnection@example.com",
+      password: "password123",
+      password_confirmation: "password123",
+      display_name: "New User"
+    )
+
+    sign_in_as(@alice)
 
     assert_difference("Connection.count") do
-      post connections_url, params: { email: @alice.email }
+      post connections_url, params: { email: new_user.email }
     end
 
     assert_redirected_to connections_url
