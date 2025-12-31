@@ -64,17 +64,16 @@ class SharedNotesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@bob)
     shared_with = shared_withs(:alice_shares_with_bob_can_edit)
 
-    # Bob tries to unshare Alice's note - should be rejected
+    # Bob tries to unshare Alice's note - gets 404 since set_note only finds owned notes
     delete note_shared_note_url(@alice_note_one, shared_with)
-    assert_redirected_to root_url
+    assert_response :not_found
   end
 
   test "should only access own notes when sharing" do
     sign_in_as(@bob)
 
-    # Bob tries to share Alice's note - should raise RecordNotFound
-    assert_raises(ActiveRecord::RecordNotFound) do
-      post note_shared_notes_url(@alice_note_one), params: { user_id: @charlie.id }
-    end
+    # Bob tries to share Alice's note - should get 404
+    post note_shared_notes_url(@alice_note_one), params: { user_id: @charlie.id }
+    assert_response :not_found
   end
 end

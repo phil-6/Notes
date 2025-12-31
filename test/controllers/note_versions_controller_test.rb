@@ -48,9 +48,9 @@ class NoteVersionsControllerTest < ActionDispatch::IntegrationTest
 
     sign_in_as(@bob)
 
-    assert_raises(ActiveRecord::RecordNotFound) do
-      get note_versions_url(charlie_note)
-    end
+    # Should get 404 when trying to access versions of note Bob doesn't own
+    get note_versions_url(charlie_note)
+    assert_response :not_found
   end
 
   test "should create version when restoring" do

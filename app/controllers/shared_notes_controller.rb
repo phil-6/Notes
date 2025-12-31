@@ -16,7 +16,7 @@ class SharedNotesController < ApplicationController
 
     @shared_with = @note.shared_withs.build(
       user: recipient,
-      can_edit: params[:can_edit] == "1" || params[:can_edit] == true
+      can_edit: ActiveModel::Type::Boolean.new.cast(params[:can_edit])
     )
 
     if @shared_with.save

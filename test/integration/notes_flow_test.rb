@@ -107,16 +107,16 @@ class NotesFlowTest < ActionDispatch::IntegrationTest
 
     sign_in_as(@user)
 
-    assert_raises(ActiveRecord::RecordNotFound) do
-      get edit_note_url(charlie_note)
-    end
+    # Should get redirected with alert when trying to access notes that don't belong to user
+    get edit_note_url(charlie_note)
+    assert_redirected_to notes_url
+    follow_redirect!
+    assert_match /not found/i, flash[:alert]
 
-    assert_raises(ActiveRecord::RecordNotFound) do
-      patch note_url(charlie_note), params: { note: { title: "Hacked" } }
-    end
+    patch note_url(charlie_note), params: { note: { title: "Hacked" } }
+    assert_redirected_to notes_url
 
-    assert_raises(ActiveRecord::RecordNotFound) do
-      delete note_url(charlie_note)
-    end
+    delete note_url(charlie_note)
+    assert_redirected_to notes_url
   end
 end
