@@ -36,7 +36,9 @@ export default class extends Controller {
     const form = this.element.querySelector("form")
     if (!form) return
 
-    const formData = new FormData(form)
+    const formData = new FormData()
+    formData.append("user[dark_mode]", isDark ? "1" : "0")
+
     const csrfToken = document.querySelector('[name="csrf-token"]').content
 
     fetch(form.action, {

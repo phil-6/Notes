@@ -41,9 +41,9 @@
         <!-- Pinned Notes -->
         <% pinned_notes = @notes.select(&:pinned) %>
         <% if pinned_notes.any? %>
-          <div class="mb-8">
+          <div class="mb-8" id="pinned_section">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4"><%= t("notes.pinned_notes") %></h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div id="pinned_notes_grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <%= render partial: "note_card", collection: pinned_notes, as: :note %>
             </div>
           </div>
@@ -51,16 +51,16 @@
 
         <!-- Other Notes -->
         <% unpinned_notes = @notes.reject(&:pinned) %>
-        <% if unpinned_notes.any? %>
-          <div>
-            <% if pinned_notes.any? %>
-              <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4"><%= t("notes.other_notes") %></h2>
-            <% end %>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div id="unpinned_section">
+          <% if pinned_notes.any? && unpinned_notes.any? %>
+            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4"><%= t("notes.other_notes") %></h2>
+          <% end %>
+          <div id="unpinned_notes_grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <% if unpinned_notes.any? %>
               <%= render partial: "note_card", collection: unpinned_notes, as: :note %>
-            </div>
+            <% end %>
           </div>
-        <% end %>
+        </div>
       </div>
     <% end %>
   </main>

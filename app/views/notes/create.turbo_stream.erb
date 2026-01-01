@@ -1,5 +1,11 @@
-<%= turbo_stream.prepend "notes_list" do %>
-  <%= render partial: "note_card", locals: { note: @note } %>
+<% if @note.pinned %>
+  <%= turbo_stream.prepend "pinned_notes_grid" do %>
+    <%= render partial: "note_card", locals: { note: @note } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.prepend "unpinned_notes_grid" do %>
+    <%= render partial: "note_card", locals: { note: @note } %>
+  <% end %>
 <% end %>
 
 <%= turbo_stream.update "note_editor" do %>

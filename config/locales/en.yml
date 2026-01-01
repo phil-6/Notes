@@ -61,6 +61,7 @@ en:
     welcome: "Welcome! Your account has been created"
 
   notes:
+    create: "Create Note"
     created: "Note created successfully"
     updated: "Note saved"
     destroyed: "Note deleted"
