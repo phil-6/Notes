@@ -1,513 +1,338 @@
-# Privacy Notes - Technical Specification
+# Privacy Notes - Product Specification
 
-**Version:** 1.0
-**Last Updated:** 2026-01-01
-**Rails Version:** 8.1.1
+**A privacy-focused note-taking application inspired by Google Keep**
+
+This document describes what to build and the architectural principles to follow. It serves as the single source of truth for recreating this application.
+
+---
 
 ## Table of Contents
 
-1. [Feature Overview](#feature-overview)
-2. [Core Features](#core-features)
-3. [UI/UX Features](#uiux-features)
-4. [Technical Implementation](#technical-implementation)
-5. [Architecture](#architecture)
-6. [Style Guide](#style-guide)
-7. [AI Development Instructions](#ai-development-instructions)
+1. [Vision & Principles](#vision--principles)
+2. [User Features](#user-features)
+3. [Technical Framework](#technical-framework)
+4. [Style Guide](#style-guide)
+5. [AI Development Instructions](#ai-development-instructions)
 
 ---
 
-## Feature Overview
+## Vision & Principles
 
-Privacy Notes is a privacy-focused note-taking application inspired by Google Keep, built with Rails 8 and Hotwire. The app emphasizes simplicity, security, and zero external dependencies beyond Ruby/Rails.
+### Product Vision
 
-### Design Philosophy
+Create a simple, fast, privacy-focused note-taking application that feels like Google Keep but respects user privacy. Notes should be quick to create, easy to organize, and beautiful to use in both light and dark modes.
 
-- **Vanilla Rails:** No Node.js, no npm, no complex build tools
-- **Hotwire-first:** Turbo + Stimulus for reactive UI with minimal JavaScript
-- **Privacy-focused:** Secure by default with no third-party tracking
-- **Progressive enhancement:** Works without JavaScript, better with it
+### Core Principles
 
----
+**Simplicity First**
+- Zero learning curve - users should understand everything immediately
+- No overwhelming features or complex navigation
+- Quick note creation without friction
 
-## Core Features
+**Privacy Focused**
+- No third-party tracking or analytics
+- All data stays on your server
+- No external dependencies for core functionality
 
-### 1. User Authentication & Preferences
+**Beautiful & Fast**
+- Instant interactions with no loading states
+- Smooth animations and transitions
+- Responsive design from mobile to desktop
+- Full dark mode support
 
-**Authentication:**
-- Secure bcrypt password hashing
-- Session-based authentication (no JWT)
-- Email + password login
-- Minimum 8-character password requirement
-- Display name for personalization
-
-**User Preferences:**
-- Dark mode toggle with persistence
-- Theme preference stored in database
-- Instant theme switching without page reload
-- Server-side rendering respects user preference on initial load
-
-**Technical Details:**
-- Model: `User` (email, password_digest, display_name, dark_mode)
-- Controller: `SessionsController` for auth, `PreferencesController` for settings
-- Theme: Stimulus controller (`theme_controller.js`) with server sync
+**Progressive Enhancement**
+- Works without JavaScript, better with it
+- Accessible to all users
+- Keyboard navigation throughout
 
 ---
 
-### 2. Note Management
+## User Features
 
-**Note CRUD:**
-- Create notes with title and rich content
-- Edit notes in modal dialogs
-- Delete notes with confirmation
-- View note details
+### 1. Account Management
 
-**Rich Text Editing:**
-- ActionText with Lexxy editor integration
-- Custom editor replacing default Trix
-- Official Lexxy stylesheets for proper theming
-- Dark mode support for editor
-- Rich text formatting preserved on note cards
+**Sign Up & Sign In**
+- Users create accounts with email and password
+- Password must be at least 8 characters
+- Each user has a display name shown throughout the app
+- Session-based authentication (no tokens)
 
-**Note Attributes:**
-- Title (optional)
-- Rich text content (ActionText)
-- Color coding (22 Tailwind colors)
-- Pinned status
-- Position (for drag-and-drop ordering)
-- Tags (many-to-many relationship)
-- Timestamps (created_at, updated_at)
-
-**Technical Details:**
-- Model: `Note` (belongs_to :user, has_rich_text :content, has_many :tags)
-- Controller: `NotesController` with RESTful actions
-- Views: Modal-based forms for create/edit
-- Rich text rendering: `<%= note.content %>` with `.lexxy-content` class
+**User Preferences**
+- Dark mode toggle in header
+- Preference persists across sessions
+- Theme applies immediately without page reload
+- All UI elements respect theme choice
 
 ---
 
-### 3. Note Organization
+### 2. Creating & Editing Notes
 
-**Pinning:**
-- Pin important notes to the top
-- Unpinning moves notes back to regular section
-- Turbo page refresh on pin/unpin for proper repositioning
-- Uses `turbo_stream.action(:refresh, :morph)` for smooth updates
+**Quick Note Creation**
+- Click "New Note" to open a modal
+- Add optional title
+- Rich text editor for content
+- Choose from 22 color options
+- Add tags for organization
+- Auto-saves after 1 second of inactivity
 
-**Drag-and-Drop Reordering:**
-- Reorder notes within pinned and unpinned sections
-- Visual drag handle on hover
-- Sortable.js integration via importmap
-- Position persisted to database
-- Separate ordering for pinned vs unpinned notes
+**Rich Text Editing**
+- Use Lexxy editor for rich text
+- Support bold, italic, lists, links
+- Dark mode support in editor
+- Formatting preserved on note cards
 
-**Color Coding:**
-- 22 Tailwind color options
-- Visual organization and categorization
-- Color picker in note form
-- Cards display with colored backgrounds
-
-**Tagging:**
-- Many-to-many relationship with tags
-- Tag model for organization
-- Tagging join table
-- Display tags on note cards
-
-**Technical Details:**
-- Pin/unpin: `NotesController#pin` and `#unpin` actions
-- Sortable: Stimulus controller (`sortable_controller.js`)
-- Reordering: `NotesController#reorder` action with `Note#insert_at` method
-- Position column: Integer field with index, default: 0
+**Editing Notes**
+- Click any note card to edit
+- Opens same modal as creation
+- Auto-save keeps changes without manual saving
+- Edit lock prevents concurrent editing by multiple users
 
 ---
 
-### 4. Collaboration Features
+### 3. Organizing Notes
 
-**Note Sharing:**
-- Share notes with other users
-- View-only or edit permissions
+**Visual Organization**
+- Notes displayed in responsive grid
+  - 1 column on mobile
+  - 2 columns on tablet
+  - 3 columns on laptop
+  - 4 columns on desktop
+- Each note shows as a colored card
+- Hover reveals actions (pin, delete, drag handle)
+
+**Pinning**
+- Pin important notes to keep them at top
+- Pinned section appears above regular notes
+- Click pin icon to toggle
+- Notes move between sections smoothly
+
+**Drag-and-Drop Reordering**
+- Drag notes to reorder within sections
+- Visual drag handle appears on hover
+- Separate ordering for pinned and unpinned notes
+- Position persists across sessions
+
+**Color Coding**
+- 22 Tailwind colors available
+- Set color when creating or editing
+- Cards display with colored background
+- Use colors to categorize notes visually
+
+**Tagging**
+- Create tags to organize notes
+- Add multiple tags to each note
+- Tags display on note cards
+- Filter notes by tag (future enhancement)
+
+---
+
+### 4. Collaboration
+
+**Sharing Notes**
+- Share individual notes with other users
+- Set view-only or edit permissions
 - Shared notes appear in "Shared with me" section
-- Owner identification on shared cards
-- Lock indicator for notes being edited
+- Owner's name visible on shared cards
 
-**Edit Locking:**
-- Pessimistic locking prevents concurrent edits
-- Lock acquired when opening edit modal
-- Lock released on save or close
-- Visual indicator showing who has the lock
-- Cannot edit when locked by another user
+**Edit Locking**
+- When someone opens a note, it locks
+- Other users see who has the lock
+- Cannot edit while locked by someone else
+- Lock releases when editor closes or saves
 
-**User Connections:**
+**Connections**
 - Connect with other users
-- Manage connections list
-- Share notes with connections
-
-**Technical Details:**
-- Model: `SharedWith` (note_id, user_id, can_edit)
-- Model: `Connection` (user_id, connected_user_id)
-- Locking: `Note#lock!`, `#unlock!`, `#locked?`, `#locked_by?`
-- Lock fields: `locked_at`, `locked_by_id`
+- Manage your connections list
+- Makes sharing easier
 
 ---
 
-### 5. Auto-save
+### 5. Additional Features
 
-**Functionality:**
-- Automatic saving after 1 second of inactivity
-- Turbo Streams update without page reload
-- Visual feedback during save
-- Keeps edit lock active during auto-save
-- No manual save button needed
+**Version History**
+- Every change to a note creates a version
+- View history of changes
+- See who made each change and when
+- Link to history in edit modal
 
-**Technical Details:**
-- Stimulus controller: `autosave_controller.js`
-- Debounced form submission (1000ms)
-- Turbo Stream response maintains lock
-- Flash message on successful save
+**Delete Notes**
+- Delete button on each card (on hover)
+- Confirmation dialog before deleting
+- Permanent deletion (no trash/recovery)
 
----
-
-### 6. Version History
-
-**Change Tracking:**
-- Track all versions of notes
-- View version history
-- See who made each change
-- Timestamp for each version
-
-**Technical Details:**
-- Model: `Version` (via PaperTrail or custom implementation)
-- Route: `note_versions_path(@note)`
-- Link in edit modal to view history
+**Note Cards Display**
+- Title shown prominently (if present)
+- Rich text content preview with formatting
+- Tags displayed as badges
+- Color-coded background
+- Actions appear on hover
 
 ---
 
-## UI/UX Features
+## Technical Framework
 
-### Modal Dialogs
+### Technology Stack
 
-**Implementation:**
-- Native HTML5 `<dialog>` element
-- No JavaScript library dependencies
-- Centered on page with backdrop
-- Keyboard support (ESC to close)
-- Click backdrop to close
-- Turbo Frame for lazy loading content
+**Core Framework**
+- Rails (latest stable version)
+- Ruby (latest stable version)
+- SQLite3 for development database
+- No Node.js required anywhere
 
-**Features:**
-- Dynamic title based on action (New Note / Editing)
-- Close button in header
-- Automatic opening when frame loads
-- Clean up on close (clear frame content)
+**Frontend Approach**
+- Vanilla Rails with Hotwire (Turbo + Stimulus)
+- As little JavaScript as possible
+- Use Turbo for all navigation and updates
+- Stimulus only for interactive behaviors
+- Importmap for JavaScript (no npm, webpack, or build tools)
 
-**Technical Details:**
-- Stimulus controller: `modal_controller.js`
-- Targets: `dialog`, `title`
-- Data attribute: `data-modal-title` for dynamic titles
-- No inline JavaScript in views (DRY principle)
-
----
-
-### Responsive Design
-
-**Layout:**
-- Mobile-first approach
-- Responsive grid layout
-- 1 column on mobile
-- 2 columns on tablet (md)
-- 3 columns on desktop (lg)
-- 4 columns on large screens (xl)
-
-**Dark Mode:**
-- Full dark mode support across all views
-- Tailwind dark: variants
-- Persists user preference
-- Instant switching with smooth transitions
-- Lexxy editor dark theme
-
-**Accessibility:**
-- Semantic HTML elements
-- ARIA labels on interactive elements
-- Keyboard navigation support
-- Screen reader friendly
-- Proper form labels
-
----
-
-### Visual Feedback
-
-**Interactions:**
-- Hover states on cards and buttons
-- Active states for drag operations
-- Transition animations (shadow, opacity)
-- Loading states during operations
-- Flash messages for user actions
-
-**Drag-and-Drop:**
-- Drag handle visible on hover
-- Ghost preview during drag
-- Smooth animations (150ms)
-- Cursor changes (grab/grabbing)
-
----
-
-## Technical Implementation
-
-### Frontend Stack
-
-**JavaScript:**
-- Hotwire (Turbo + Stimulus)
-- Importmap-rails (no Node.js, no npm)
-- Stimulus controllers:
-  - `autosave_controller.js` - Auto-save functionality
-  - `modal_controller.js` - Modal dialog behavior
-  - `sortable_controller.js` - Drag-and-drop reordering
-  - `theme_controller.js` - Dark mode switching
-
-**CSS:**
-- Tailwind CSS v4.1.18 (standalone executable)
-- No Node.js required
+**Styling**
+- Tailwind CSS (latest version, standalone executable)
 - Custom Lexxy theme for editor
-- Dark mode support via `dark:` variants
-- Responsive utilities
+- Full dark mode throughout
+- Mobile-first responsive design
 
-**Third-Party JavaScript:**
-- Sortable.js v1.15.3 (via CDN, imported via importmap)
-- Lexxy editor (custom ActionText editor)
+**Rich Text**
+- ActionText for rich text storage
+- Lexxy editor instead of default Trix
+- Official Lexxy stylesheets
+- Dark mode support
 
----
+**Authentication**
+- Rails default authentication approach
+- Bcrypt for password hashing
+- Session-based (no JWT)
+- Strong parameters for security
 
-### Backend Stack
+### Architectural Decisions
 
-**Framework:**
-- Rails 8.1.1
-- Ruby 3.3.6
-- SQLite3 for development
-- No Redis required
-
-**Rails Components:**
-- ActionText for rich text
-- Turbo for reactive UI
-- Solid Queue for background jobs
-- Solid Cache for caching
+**No External Dependencies**
+- Prefer Rails built-in solutions
+- Solid Queue instead of Sidekiq
+- Solid Cache instead of Redis
 - Solid Cable for WebSockets
-- Propshaft for asset pipeline
+- Every dependency must justify its existence
 
-**Database:**
-- SQLite3 (development)
-- Foreign key constraints
-- Indexed columns for performance
-- Transaction support for data integrity
+**JavaScript Philosophy**
+- Use Turbo Frames for modal dialogs
+- Use Turbo Streams for live updates
+- Stimulus controllers should be small and focused
+- Only one external JS library: Sortable.js (for drag-and-drop)
+- No inline JavaScript in views
 
----
-
-### Database Schema
-
-**Core Models:**
-
-```ruby
-User
-  - email (string, unique, indexed)
-  - password_digest (string)
-  - display_name (string)
-  - dark_mode (boolean, default: false)
-  - timestamps
-
-Note
-  - user_id (integer, foreign key, indexed)
-  - title (string)
-  - color (string)
-  - pinned (boolean, default: false, indexed)
-  - position (integer, default: 0, indexed)
-  - locked_at (datetime)
-  - locked_by_id (integer, foreign key)
-  - timestamps
-  - has_rich_text :content (ActionText)
-
-Tag
-  - name (string, unique, indexed)
-  - user_id (integer, foreign key)
-  - timestamps
-
-Tagging
-  - note_id (integer, foreign key, indexed)
-  - tag_id (integer, foreign key, indexed)
-  - timestamps
-
-SharedWith
-  - note_id (integer, foreign key, indexed)
-  - user_id (integer, foreign key, indexed)
-  - can_edit (boolean, default: false)
-  - timestamps
-
-Connection
-  - user_id (integer, foreign key, indexed)
-  - connected_user_id (integer, foreign key, indexed)
-  - timestamps
-```
-
----
-
-### Routing
-
-**RESTful Routes:**
-
-```ruby
-# Authentication
-get    '/sign_in',  to: 'sessions#new'
-post   '/sign_in',  to: 'sessions#create'
-delete '/sign_out', to: 'sessions#destroy'
-get    '/sign_up',  to: 'users#new'
-post   '/sign_up',  to: 'users#create'
-
-# Preferences
-patch  '/preferences', to: 'preferences#update'
-
-# Notes
-resources :notes do
-  member do
-    patch :pin
-    patch :unpin
-    patch :lock
-    patch :unlock
-    patch :reorder
-  end
-  resources :versions, only: [:index]
-end
-
-# Shared notes
-get '/shared', to: 'shared_notes#index', as: :shared_with_me
-
-# Connections
-resources :connections, only: [:index, :create, :destroy]
-
-# Tags
-resources :tags, only: [:index, :create, :destroy]
-```
-
----
-
-### Key Algorithms
-
-**Note Reordering (`Note#insert_at`):**
-
-```ruby
-def insert_at(new_position)
-  return if position == new_position
-
-  transaction do
-    # Get all notes in the same section (pinned/unpinned)
-    notes = user.notes.where(pinned: pinned).order(:position)
-    notes = notes.where.not(id: id)
-    notes_array = notes.to_a
-
-    # Insert this note at the new position
-    notes_array.insert(new_position - 1, self)
-
-    # Update positions for all affected notes
-    notes_array.each_with_index do |note, index|
-      note.update_column(:position, index + 1) if note.position != (index + 1)
-    end
-  end
-end
-```
-
-**Edit Locking:**
-- Pessimistic locking with timeout
-- Lock acquired on edit, released on save/close
-- Visual feedback for locked state
-- Cannot edit if locked by another user
-
----
-
-### Performance Optimizations
-
-**Database:**
-- Eager loading with `includes` to prevent N+1 queries
-- Indexed foreign keys and frequently queried columns
-- Transaction wrapping for data consistency
-- Query optimization in controllers
-
-**Frontend:**
-- Turbo for instant navigation
-- Minimal JavaScript payload
-- CSS compiled and cached
-- Lazy loading via Turbo Frames
-
-**Caching:**
-- Solid Cache for database-backed caching
-- Fragment caching where appropriate
-- Asset fingerprinting for browser caching
-
----
-
-### Security Features
-
-**Authentication & Authorization:**
-- Bcrypt password hashing (cost: 12)
-- Session-based authentication
-- CSRF protection enabled
-- Strong parameters in controllers
-- Permission checks before edit/delete
-
-**Data Protection:**
-- SQL injection prevention (ActiveRecord queries)
-- XSS protection (Rails escaping by default)
-- Mass assignment protection (strong params)
-- No sensitive data in logs
-- Secure session cookies
-
-**Best Practices:**
-- Brakeman security scanner
-- Regular dependency updates
-- No third-party tracking
-- Privacy-focused design
-
----
-
-## Architecture
-
-### Design Patterns
-
-**MVC with Rails Conventions:**
-- Thin controllers, rich models
-- Vanilla Rails approach (no services unless justified)
-- Concerns for shared behavior
+**Database Design**
 - RESTful resource routing
+- Proper foreign key constraints
+- Index all foreign keys and frequently queried columns
+- Eager load associations to prevent N+1 queries
 
-**Frontend Patterns:**
-- Progressive enhancement
-- Hotwire for reactivity
-- Stimulus for behavior
-- Turbo Frames for independence
+**Code Organization**
+- Thin controllers, rich models
+- No services unless clearly beneficial
+- Concerns for shared behavior
+- Keep methods short and focused
+- Follow Rails conventions strictly
+
+### Key Implementation Patterns
+
+**Modal Dialogs**
+- Use native HTML5 `<dialog>` element
+- Turbo Frames load content lazily
+- Center modals on screen
+- ESC key to close
+- Click backdrop to close
+
+**Pin/Unpin Behavior**
+- Use Turbo page refresh (morph) to reposition cards
+- Updates entire page smoothly
+- Maintains scroll position
+
+**Drag-and-Drop**
+- Use Sortable.js library (via importmap)
+- Handle icon shows on hover
+- Updates position in database
+- Separate ordering for pinned/unpinned sections
+
+**Auto-save**
+- Debounce form submission (1 second)
 - Turbo Streams for updates
+- Maintains edit lock during auto-save
 
-**Code Organization:**
-- Methods ordered by invocation
-- Private methods below public
-- SRP (Single Responsibility Principle)
-- DRY (Don't Repeat Yourself)
+**Dark Mode**
+- Server renders initial theme state
+- Client-side toggle updates immediately
+- Saves preference to server in background
+- Checkbox wrapped in label for click reliability
 
----
+### Security Requirements
 
-### Testing Strategy
+- Strong parameters in all controllers
+- CSRF protection enabled
+- XSS protection (Rails default escaping)
+- SQL injection prevention (use ActiveRecord)
+- Never log sensitive data
+- Check permissions before all modifications
+- Session-based auth only
 
-**Coverage:**
-- Controller tests for all actions
+### Performance Requirements
+
+- Eager load associations to prevent N+1 queries
+- Index foreign keys and WHERE/ORDER BY columns
+- Use transactions for multi-record updates
+- Fragment caching where beneficial
+- Fast test suite using fixtures
+
+### Testing Requirements
+
+- Full controller test coverage
 - Model tests for business logic
 - System tests for critical user flows
-- Integration tests matching controller actions
+- Use fixtures for test data (faster than factories)
+- All tests must pass before deployment
 
-**Approach:**
-- Fixtures for stable reference data
-- Factories for dynamic scenarios
-- Small, focused tests
-- Fast execution (prefer fixtures)
+---
 
-**Tools:**
-- Minitest (Rails default)
-- System tests with Capybara
-- Fixtures in `test/fixtures/`
-- 112 runs, 286 assertions (all passing)
+## Database Models
+
+**User**
+- Email (unique, indexed)
+- Password (hashed with bcrypt)
+- Display name
+- Dark mode preference
+- Standard timestamps
+
+**Note**
+- Belongs to user
+- Title (optional)
+- Rich text content (ActionText)
+- Color (string)
+- Pinned (boolean, indexed)
+- Position (integer, indexed)
+- Lock information (timestamp, locked_by user)
+- Standard timestamps
+
+**Tag**
+- Name (unique per user, indexed)
+- Belongs to user
+- Many-to-many with notes through Tagging
+
+**Tagging**
+- Join table for notes and tags
+- Both foreign keys indexed
+
+**SharedWith**
+- Note can be shared with user
+- Permission level (can_edit boolean)
+- Both foreign keys indexed
+
+**Connection**
+- User connects with another user
+- Both foreign keys indexed
+
+**Version** (for change tracking)
+- Store who made changes
+- Store when changes were made
+- Link to note and user
 
 ---
 
@@ -598,7 +423,8 @@ We should aim to keep our code as close to the Rails defaults as possible. This 
 ### Gems and Libraries
 
 We should avoid using additional gems where possible. We should discuss as a team before implementing new gems and clearly identify what pain they are solving and what benefits they bring.
-Check the version of a gem when using its functions to ensure we're using the latest features, EG Pagy v43 and Tailwind 4.
+
+Always use the latest stable version of gems and check their documentation for current best practices.
 
 ### Turbo and JavaScript
 
@@ -632,7 +458,7 @@ We use Tailwind for CSS. We try and keep styles DRY where appropriate.
 
 We use brakeman for static analysis and security checks.
 
-We use Pagy v43 for pagination.
+We use Pagy for pagination (latest stable version).
 
 ## i18n
 
@@ -817,7 +643,7 @@ Security should be built into our code from the start, Rails comes with many bui
 
 ## 📖 Style Guide Reference
 
-**ALWAYS follow the comprehensive style guide at [`docs/STYLE.md`](STYLE.md).**
+**ALWAYS follow the comprehensive style guide above.**
 
 All code generation, suggestions, and modifications MUST adhere to the patterns, principles, and conventions defined in the style guide. Read and understand it thoroughly before generating any code. Rules in the style guide take precedence over any other instructions.
 
@@ -872,7 +698,7 @@ You are an expert Rails developer following the vanilla Rails philosophy. Genera
 - ❌ Don't use React/Vue (prefer Hotwire)
 - ❌ Don't mix tabs and spaces (use 2-space indentation)
 
-## Rails 8 & Hotwire Defaults
+## Rails & Hotwire Defaults
 
 **Frontend:**
 - Use Turbo Frames for independent page sections
@@ -882,6 +708,7 @@ You are an expert Rails developer following the vanilla Rails philosophy. Genera
 - Only add custom JS when Hotwire isn't sufficient
 
 **Backend:**
+- Use latest stable Rails version
 - Solid Queue for background jobs
 - Solid Cache for caching
 - Thin controllers, rich models
@@ -943,4 +770,4 @@ Before considering code complete:
 
 ---
 
-**When in doubt:** Check [`docs/STYLE.md`](STYLE.md) for detailed guidance.
+**When in doubt:** Refer to the style guide above for detailed guidance.
