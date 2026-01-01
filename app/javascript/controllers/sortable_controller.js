@@ -12,7 +12,6 @@ export default class extends Controller {
       animation: 150,
       handle: "[data-sortable-handle]",
       ghostClass: "opacity-50",
-      dragClass: "rotate-2 scale-105",
       onEnd: this.onEnd.bind(this)
     })
   }

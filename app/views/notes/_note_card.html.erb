@@ -5,7 +5,8 @@
   is_locked_by_other = note.locked? && !note.locked_by?(current_user)
 %>
 
-<div class="<%= note_color %> border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group relative"
+<div id="<%= dom_id(note) %>"
+     class="<%= note_color %> border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow duration-200 group relative"
      data-sortable-id="<%= note.id %>">
     <%# Drag handle %>
     <% if note.user_id == current_user.id %>
