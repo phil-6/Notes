@@ -40,11 +40,6 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 - Responsive design from mobile to desktop
 - Full dark mode support
 
-**Progressive Enhancement**
-- Works without JavaScript, better with it
-- Accessible to all users
-- Keyboard navigation throughout
-
 ---
 
 ## User Features
@@ -55,7 +50,7 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 - Users create accounts with email and password
 - Password must be at least 8 characters
 - Each user has a display name shown throughout the app
-- Session-based authentication (no tokens)
+- Session-based authentication (rails default auth, no tokens)
 
 **User Preferences**
 - Dark mode toggle in header
@@ -71,9 +66,9 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 - Click "New Note" to open a modal
 - Add optional title
 - Rich text editor for content
-- Choose from 22 color options
+- Choose from 22 color options (use all available tailwind colours) 
 - Add tags for organization
-- Auto-saves after 1 second of inactivity
+- Auto-saves after 1 second of inactivity (page doesn't update) 
 
 **Rich Text Editing**
 - Use Lexxy editor for rich text
@@ -93,10 +88,10 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 
 **Visual Organization**
 - Notes displayed in responsive grid
-  - 1 column on mobile
-  - 2 columns on tablet
-  - 3 columns on laptop
-  - 4 columns on desktop
+  - 2 columns on mobile
+  - 3 columns on tablet
+  - 4 columns on laptop
+  - 5 columns on desktop
 - Each note shows as a colored card
 - Hover reveals actions (pin, delete, drag handle)
 
@@ -104,7 +99,7 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 - Pin important notes to keep them at top
 - Pinned section appears above regular notes
 - Click pin icon to toggle
-- Notes move between sections smoothly
+- Notes move between sections smoothly and immediately 
 
 **Drag-and-Drop Reordering**
 - Drag notes to reorder within sections
@@ -150,15 +145,17 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 ### 5. Additional Features
 
 **Version History**
-- Every change to a note creates a version
+- Every change to a note creates a version (edits/saves that don't change anything don't create a version history, autosaves should also not create versions, only when the user has finished editing) 
 - View history of changes
 - See who made each change and when
 - Link to history in edit modal
 
 **Delete Notes**
 - Delete button on each card (on hover)
-- Confirmation dialog before deleting
+- Confirmation dialog before deleting (use dialog element instead of raw js, see boring rails implementation) 
 - Permanent deletion (no trash/recovery)
+
+(note, perhaps this should be archive before delete) 
 
 **Note Cards Display**
 - Title shown prominently (if present)
@@ -176,7 +173,7 @@ Create a simple, fast, privacy-focused note-taking application that feels like G
 **Core Framework**
 - Rails (latest stable version)
 - Ruby (latest stable version)
-- SQLite3 for development database
+- SQLite for development database
 - No Node.js required anywhere
 
 **Frontend Approach**
