@@ -43,8 +43,8 @@
         <% end %>
 
         <% if note.content.present? %>
-          <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 prose prose-sm max-w-none <%= 'mb-3' if note.tags.any? %>">
-            <%= note.content.to_plain_text.truncate(200) %>
+          <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 prose prose-sm max-w-none <%= 'mb-3' if note.tags.any? %> lexxy-content">
+            <%= note.content %>
           </div>
         <% end %>
 
@@ -66,8 +66,8 @@
         <% end %>
 
         <% if note.content.present? %>
-          <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 prose prose-sm max-w-none <%= 'mb-3' if note.tags.any? %>">
-            <%= note.content.to_plain_text.truncate(200) %>
+          <div class="text-sm text-gray-700 dark:text-gray-300 line-clamp-6 prose prose-sm max-w-none <%= 'mb-3' if note.tags.any? %> lexxy-content">
+            <%= note.content %>
           </div>
         <% end %>
 

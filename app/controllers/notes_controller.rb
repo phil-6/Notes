@@ -65,7 +65,7 @@ class NotesController < ApplicationController
     @note.update(pinned: true)
     respond_to do |format|
       format.html { redirect_to notes_path, notice: t("notes.pinned") }
-      format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
+      format.turbo_stream { render turbo_stream: turbo_stream.action(:refresh, :morph) }
     end
   end
 
@@ -73,7 +73,7 @@ class NotesController < ApplicationController
     @note.update(pinned: false)
     respond_to do |format|
       format.html { redirect_to notes_path, notice: t("notes.unpinned") }
-      format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
+      format.turbo_stream { render turbo_stream: turbo_stream.action(:refresh, :morph) }
     end
   end
 
