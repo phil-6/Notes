@@ -1,0 +1,24 @@
+<div data-controller="modal" class="hidden" id="<%= id %>">
+  <dialog data-modal-target="dialog" class="rounded-lg shadow-xl backdrop:bg-gray-900 backdrop:bg-opacity-50 p-0 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="bg-white dark:bg-gray-800 rounded-lg">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white"><%= title %></h2>
+        <button type="button"
+                data-action="modal#close"
+                class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                aria-label="Close">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <%= turbo_frame_tag frame_id do %>
+          <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+            <%= content %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </dialog>
+</div>

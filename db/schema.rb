@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_31_193905) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_01_005040) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -92,11 +92,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_31_193905) do
     t.datetime "locked_at"
     t.integer "locked_by_id"
     t.boolean "pinned", default: false, null: false
+    t.integer "position", default: 0, null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["locked_by_id"], name: "index_notes_on_locked_by_id"
     t.index ["pinned"], name: "index_notes_on_pinned"
+    t.index ["position"], name: "index_notes_on_position"
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 

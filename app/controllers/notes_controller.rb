@@ -2,15 +2,15 @@ class NotesController < ApplicationController
   include ActionView::RecordIdentifier
 
   before_action :authenticate_user!
-  before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin, :lock, :unlock ]
+  before_action :set_note, only: [ :show, :edit, :update, :destroy, :pin, :unpin, :lock, :unlock, :reorder ]
   before_action :check_edit_permission, only: [ :edit, :update ]
   before_action :acquire_lock, only: [ :edit ]
 
   def index
-    # Combine owned notes and shared notes
-    owned_notes = current_user.notes.includes(:user, :rich_text_content)
+    # Combine owned notes and shared notes, ordered by position within pinned status
+    owned_notes = current_user.notes.includes(:user, :rich_text_content).order(position: :asc)
     shared_notes = current_user.shared_notes.includes(:user, :rich_text_content)
-    @notes = (owned_notes + shared_notes).sort_by { |n| [ n.pinned? ? 0 : 1, -n.updated_at.to_i ] }
+    @notes = (owned_notes + shared_notes).sort_by { |n| [ n.pinned? ? 0 : 1, n.position ] }
   end
 
   def show
@@ -92,6 +92,16 @@ class NotesController < ApplicationController
         format.html { redirect_to notes_path }
         format.turbo_stream { render turbo_stream: turbo_stream.replace(dom_id(@note), partial: "note_card", locals: { note: @note }) }
       end
+    else
+      head :forbidden
+    end
+  end
+
+  def reorder
+    if @note.user == current_user
+      new_position = params[:position].to_i
+      @note.insert_at(new_position)
+      head :ok
     else
       head :forbidden
     end

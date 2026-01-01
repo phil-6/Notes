@@ -1,9 +1,16 @@
-<%= turbo_frame_tag "note_editor" do %>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
-    <div class="flex items-center justify-between mb-4 sm:mb-6">
-      <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"><%= t("notes.new_note") %></h2>
-      <%= link_to "×", notes_path, class: "text-3xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 leading-none" %>
-    </div>
-    <%= render "form", note: @note %>
-  </div>
+<%= turbo_frame_tag "note_modal_frame" do %>
+  <%= render "form", note: @note %>
 <% end %>
+
+<script>
+  document.addEventListener('turbo:frame-load', (event) => {
+    if (event.target.id === 'note_modal_frame') {
+      document.getElementById('modal_title').textContent = '<%= j t("notes.new_note") %>'
+      const modal = document.querySelector('#note_modal [data-modal-target="dialog"]')
+      if (modal && !modal.open) {
+        modal.showModal()
+        document.body.classList.add('overflow-hidden')
+      }
+    }
+  })
+</script>

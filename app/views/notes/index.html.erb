@@ -24,13 +24,10 @@
 
     <!-- Navigation & Actions -->
     <div class="mb-8 flex flex-wrap gap-3">
-      <%= link_to t("notes.new_note"), new_note_path, data: { turbo_frame: "note_editor" }, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <%= link_to t("notes.new_note"), new_note_path, data: { turbo_frame: "note_modal_frame", action: "click->modal#open" }, class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
+      <%= link_to t("shared_notes.title"), shared_notes_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
       <%= link_to t("connections.title"), connections_path, class: "inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" %>
     </div>
-
-    <!-- Inline Editor (Turbo Frame) -->
-    <%= turbo_frame_tag "note_editor", class: "mb-8" do %>
-    <% end %>
 
     <% if @notes.empty? %>
       <div id="notes_list" class="text-center py-12">
@@ -43,7 +40,10 @@
         <% if pinned_notes.any? %>
           <div class="mb-8" id="pinned_section">
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4"><%= t("notes.pinned_notes") %></h2>
-            <div id="pinned_notes_grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div id="pinned_notes_grid"
+                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                 data-controller="sortable"
+                 data-sortable-url-value="<%= reorder_note_path(':id') %>">
               <%= render partial: "note_card", collection: pinned_notes, as: :note %>
             </div>
           </div>
@@ -55,7 +55,10 @@
           <% if pinned_notes.any? && unpinned_notes.any? %>
             <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4"><%= t("notes.other_notes") %></h2>
           <% end %>
-          <div id="unpinned_notes_grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div id="unpinned_notes_grid"
+               class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+               data-controller="sortable"
+               data-sortable-url-value="<%= reorder_note_path(':id') %>">
             <% if unpinned_notes.any? %>
               <%= render partial: "note_card", collection: unpinned_notes, as: :note %>
             <% end %>
@@ -64,4 +67,28 @@
       </div>
     <% end %>
   </main>
+
+  <!-- Note Modal -->
+  <div data-controller="modal" id="note_modal">
+    <dialog data-modal-target="dialog"
+            class="rounded-lg shadow-xl backdrop:bg-gray-900 backdrop:bg-opacity-50 p-0 max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div class="bg-white dark:bg-gray-800 rounded-lg max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white" id="modal_title"></h2>
+          <button type="button"
+                  data-action="modal#close"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                  aria-label="Close">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-grow">
+          <%= turbo_frame_tag "note_modal_frame" do %>
+          <% end %>
+        </div>
+      </div>
+    </dialog>
+  </div>
 </div>

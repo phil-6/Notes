@@ -10,3 +10,6 @@ pin_all_from "app/javascript/controllers", under: "controllers"
 # Lexxy rich text editor
 pin "lexxy", to: "lexxy.js"
 pin "@rails/activestorage", to: "activestorage.esm.js"
+
+# Sortable.js for drag and drop
+pin "sortablejs", to: "https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/modular/sortable.esm.js"

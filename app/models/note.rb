@@ -73,6 +73,28 @@ class Note < ApplicationRecord
     !locked? || locked_by?(user)
   end
 
+  # Positioning methods
+  def insert_at(new_position)
+    return if position == new_position
+
+    transaction do
+      # Get all notes for this user with the same pinned status
+      notes = user.notes.where(pinned: pinned).order(:position)
+
+      # Remove current note from the list
+      notes = notes.where.not(id: id)
+
+      # Insert at new position
+      notes_array = notes.to_a
+      notes_array.insert(new_position - 1, self)
+
+      # Update positions for all notes
+      notes_array.each_with_index do |note, index|
+        note.update_column(:position, index + 1) if note.position != (index + 1)
+      end
+    end
+  end
+
   private
   def set_default_color
     self.color ||= "default"

@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       patch :unpin
       post :lock
       delete :unlock
+      patch :reorder
     end
     resources :shared_notes, only: [ :create, :destroy ]
     resources :versions, controller: "note_versions", only: [ :index, :show ] do

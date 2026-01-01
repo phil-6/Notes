@@ -1,35 +1,23 @@
-<% if turbo_frame_request? %>
-  <%= turbo_frame_tag dom_id(@note, :edit) do %>
-    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("notes.editing") %></h2>
-        <div class="flex items-center gap-3">
-          <%= link_to t("versions.view_history"),
-              note_versions_path(@note),
-              target: "_top",
-              class: "text-sm text-blue-600 dark:text-blue-400 hover:underline" %>
-          <%= link_to "×", notes_path, data: { turbo_frame: dom_id(@note) }, class: "text-3xl text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 leading-none", title: "Close" %>
-        </div>
-      </div>
-
-      <%= render "form", note: @note %>
-    </div>
-  <% end %>
-<% else %>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <header class="bg-white dark:bg-gray-800 shadow-sm mb-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("notes.editing") %></h1>
-        <%= link_to notes_path, class: "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white", title: "Back to notes" do %>
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-        <% end %>
-      </div>
-    </header>
-
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-6">
-        <%= render "form", note: @note %>
-      </div>
-    </main>
+<%= turbo_frame_tag "note_modal_frame" do %>
+  <div class="flex items-center justify-between mb-4">
+    <%= link_to t("versions.view_history"),
+        note_versions_path(@note),
+        target: "_top",
+        class: "text-sm text-blue-600 dark:text-blue-400 hover:underline" %>
   </div>
+
+  <%= render "form", note: @note %>
 <% end %>
+
+<script>
+  document.addEventListener('turbo:frame-load', (event) => {
+    if (event.target.id === 'note_modal_frame') {
+      document.getElementById('modal_title').textContent = '<%= j t("notes.editing") %>'
+      const modal = document.querySelector('#note_modal [data-modal-target="dialog"]')
+      if (modal && !modal.open) {
+        modal.showModal()
+        document.body.classList.add('overflow-hidden')
+      }
+    }
+  })
+</script>
