@@ -1,0 +1,86 @@
+/* Lexxy dark mode theme overrides */
+
+/* Light mode (default Lexxy variables work well) */
+:root {
+  /* Ensure proper border and spacing for our Tailwind design */
+  --lexxy-border-radius: 0.5rem;
+}
+
+/* Dark mode overrides */
+.dark {
+  /* Canvas and backgrounds */
+  --lexxy-color-canvas: oklch(25% 0 0); /* Dark gray background */
+  --lexxy-color-text: oklch(95% 0 0); /* Light text */
+  --lexxy-color-text-subtle: oklch(70% 0 0); /* Subtle gray text */
+
+  /* Ink colors (grayscale) inverted for dark mode */
+  --lexxy-color-ink: oklch(95% 0 0); /* Lightest - for primary text */
+  --lexxy-color-ink-light: oklch(80% 0 0);
+  --lexxy-color-ink-lighter: oklch(65% 0 0);
+  --lexxy-color-ink-lightest: oklch(50% 0 0);
+  --lexxy-color-ink-inverted: oklch(20% 0 0); /* Dark - for contrast */
+
+  /* Borders and subtle elements */
+  --lexxy-color-canvas-subtle: oklch(30% 0 0); /* Slightly lighter than canvas */
+
+  /* Link and accent colors - keep blue but adjust for dark backgrounds */
+  --lexxy-color-link: oklch(70% 0.15 250); /* Lighter blue for dark mode */
+  --lexxy-color-accent-dark: oklch(55% 0.15 270);
+  --lexxy-color-accent-medium: oklch(65% 0.12 270);
+  --lexxy-color-accent-light: oklch(75% 0.1 270);
+  --lexxy-color-accent-lightest: oklch(85% 0.05 270);
+
+  /* Selection and focus states */
+  --lexxy-color-selected: oklch(40% 0.15 250); /* Darker blue for selections */
+  --lexxy-color-selected-hover: oklch(35% 0.15 250);
+
+  /* Code blocks */
+  --lexxy-color-code-bg: oklch(20% 0 0); /* Very dark for code */
+
+  /* Table styling */
+  --lexxy-color-table-header: oklch(30% 0 0);
+  --lexxy-color-table-border: oklch(35% 0 0);
+  --lexxy-color-table-cell-selected: oklch(35% 0.1 250);
+
+  /* Focus ring */
+  --lexxy-focus-ring-color: oklch(65% 0.15 250); /* Blue focus ring */
+}
+
+/* Editor container adjustments for Tailwind integration */
+lexxy-editor {
+  border-color: rgb(75 85 99) !important; /* Match Tailwind gray-600 in dark mode */
+}
+
+.dark lexxy-editor {
+  background-color: rgb(31 41 55) !important; /* Match Tailwind gray-800 */
+  color: rgb(255 255 255) !important; /* White text */
+}
+
+lexxy-editor:focus {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 2px rgb(59 130 246) !important; /* Blue-500 focus ring */
+}
+
+/* Toolbar styling for dark mode */
+.dark lexxy-toolbar {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+  border-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+.dark lexxy-toolbar .trix-button-group {
+  background-color: rgb(31 41 55) !important; /* gray-800 */
+  border-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+.dark lexxy-toolbar .trix-button {
+  color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+.dark lexxy-toolbar .trix-button:hover {
+  background-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+.dark lexxy-toolbar .trix-button.trix-active {
+  background-color: rgb(30 58 138) !important; /* blue-900 */
+  color: rgb(147 197 253) !important; /* blue-300 */
+}
