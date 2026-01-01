@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> This was vibe coded with Claude Sonnet 4.5 and Claude Code. It's not great
+
+
 # Privacy Notes
 
 A privacy-focused note-taking application built with Rails 8, inspired by Google Keep. Features include rich text editing, color-coded notes, pinning, tagging, sharing, and dark mode support.
